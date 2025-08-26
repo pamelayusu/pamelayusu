@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -20,6 +20,7 @@
             justify-content: center;
             align-items: center;
             transition: background-color 0.5s ease;
+            padding: 20px;
         }
         
         .container {
@@ -44,6 +45,21 @@
             margin: 25px 0;
             color: #ffffff;
             text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .timer-ended {
+            font-size: 40px;
+            color: #ff5252;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .timer-ended.show {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .controls {
@@ -136,6 +152,29 @@
             background-color: #c62828 !important;
             color: white;
         }
+        
+        .countdown-final {
+            animation: pulse 0.5s infinite alternate;
+            color: #ff5252 !important;
+            font-size: 90px !important;
+        }
+        
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 82, 82, 0.8);
+            }
+            to {
+                transform: scale(1.1);
+                text-shadow: 0 0 30px rgba(255, 82, 82, 1);
+            }
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #aaa;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -143,6 +182,7 @@
         <h1>课堂休息倒计时器</h1>
         
         <div class="timer-display" id="timer">10:00</div>
+        <div class="timer-ended" id="timerEnded"></div>
         
         <div class="controls">
             <button class="start-btn" id="startBtn">开始</button>
@@ -159,12 +199,17 @@
             <input type="number" id="customTime" min="1" max="60" placeholder="自定义分钟">
             <div class="warning" id="warning"></div>
         </div>
+        
+        <div class="footer">
+            最后5秒将会有突出显示，结束后显示已过时间
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 获取DOM元素
             const timerDisplay = document.getElementById('timer');
+            const timerEnded = document.getElementById('timerEnded');
             const startBtn = document.getElementById('startBtn');
             const pauseBtn = document.getElementById('pauseBtn');
             const resetBtn = document.getElementById('resetBtn');
@@ -177,6 +222,7 @@
             let remainingSeconds = totalSeconds;
             let timerInterval = null;
             let isRunning = false;
+            let endTime = null;
             
             // 更新显示时间
             function updateDisplay() {
@@ -190,6 +236,13 @@
                 } else {
                     body.classList.remove('red-alert');
                 }
+                
+                // 检查是否最后5秒
+                if (remainingSeconds <= 5 && remainingSeconds > 0) {
+                    timerDisplay.classList.add('countdown-final');
+                } else {
+                    timerDisplay.classList.remove('countdown-final');
+                }
             }
             
             // 开始计时
@@ -202,6 +255,8 @@
                 }
                 
                 isRunning = true;
+                endTime = new Date(Date.now() + remainingSeconds * 1000);
+                
                 timerInterval = setInterval(() => {
                     remainingSeconds--;
                     updateDisplay();
@@ -209,7 +264,7 @@
                     if (remainingSeconds <= 0) {
                         clearInterval(timerInterval);
                         isRunning = false;
-                        playAlarm();
+                        showTimeEnded();
                     }
                 }, 1000);
             }
@@ -218,6 +273,7 @@
             function pauseTimer() {
                 clearInterval(timerInterval);
                 isRunning = false;
+                timerDisplay.classList.remove('countdown-final');
             }
             
             // 重置计时
@@ -227,12 +283,23 @@
                 remainingSeconds = totalSeconds;
                 updateDisplay();
                 body.classList.remove('red-alert');
+                timerDisplay.classList.remove('countdown-final');
+                timerEnded.classList.remove('show');
             }
             
-            // 播放提示音
-            function playAlarm() {
-                // 在实际使用中可以添加声音提示
-                console.log("时间到!");
+            // 显示时间结束
+            function showTimeEnded() {
+                timerEnded.textContent = "时间到！";
+                timerEnded.classList.add('show');
+                
+                // 开始计算已过时间
+                let elapsedSeconds = 0;
+                setInterval(() => {
+                    elapsedSeconds++;
+                    const minutes = Math.floor(elapsedSeconds / 60);
+                    const seconds = elapsedSeconds % 60;
+                    timerEnded.textContent = `已过时间: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
             }
             
             // 设置时间
