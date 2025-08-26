@@ -11,8 +11,6 @@
             --group-2: #ED7D31; /* Office橙色 */
             --group-3: #A5A5A5; /* Office灰色 */
             --group-4: #FFC000; /* Office黄色 */
-            --group-5: #5B9BD5; /* Office浅蓝 */
-            --group-6: #70AD47; /* Office绿色 */
         }
         
         body {
@@ -35,7 +33,7 @@
             display: flex;
             width: 100%;
             gap: 20px;
-            height: calc(100vh - 150px); /* 减去标题和按钮高度 */
+            height: calc(100vh - 150px);
         }
         
         .groups-container {
@@ -44,14 +42,14 @@
             flex-direction: column;
             gap: 20px;
             overflow-y: auto;
-            padding-right: 10px; /* 为滚动条留空间 */
+            padding-right: 10px;
         }
         
         .group-row {
             display: flex;
             gap: 20px;
             justify-content: space-between;
-            min-height: 0; /* 重要：防止flex项目溢出 */
+            min-height: 0;
         }
         
         .chart-container {
@@ -62,13 +60,13 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            height: 100%; /* 与左侧同高 */
+            height: 100%;
         }
         
         .chart-wrapper {
             flex: 1;
             position: relative;
-            min-height: 300px; /* 最小高度保证图表可见 */
+            min-height: 300px;
         }
         
         #scoreChart {
@@ -84,7 +82,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
-            min-width: 0; /* 防止内容溢出 */
+            min-width: 0;
             display: flex;
             flex-direction: column;
         }
@@ -104,13 +102,11 @@
         .group-2 { border-top: 4px solid var(--group-2); }
         .group-3 { border-top: 4px solid var(--group-3); }
         .group-4 { border-top: 4px solid var(--group-4); }
-        .group-5 { border-top: 4px solid var(--group-5); }
-        .group-6 { border-top: 4px solid var(--group-6); }
         
         .group h2 {
             margin-top: 0;
             text-align: center;
-            font-size: 20px;
+            font-size: 22px;
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             white-space: nowrap;
@@ -122,31 +118,29 @@
         .group-2 h2 { color: var(--group-2); }
         .group-3 h2 { color: var(--group-3); }
         .group-4 h2 { color: var(--group-4); }
-        .group-5 h2 { color: var(--group-5); }
-        .group-6 h2 { color: var(--group-6); }
         
         .score {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: bold;
             text-align: center;
-            margin: 20px 0;
+            margin: 25px 0;
             background-color: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             font-family: 'Arial', sans-serif;
         }
         
         .buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         button {
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
@@ -163,8 +157,6 @@
         .group-2 .lottery-btn { background-color: var(--group-2); }
         .group-3 .lottery-btn { background-color: var(--group-3); }
         .group-4 .lottery-btn { background-color: var(--group-4); }
-        .group-5 .lottery-btn { background-color: var(--group-5); }
-        .group-6 .lottery-btn { background-color: var(--group-6); }
         
         .lottery-btn:hover {
             filter: brightness(1.2);
@@ -175,10 +167,11 @@
             background-color: #3a3a3a;
             color: #aaaaaa;
             border: 1px solid #4a4a4a;
+            font-size: 15px;
         }
         
         .undo-btn:hover:not(:disabled) {
-            background-color: #4a4a4a;
+            background-color: #4a3a3a;
             color: #ffffff;
         }
         
@@ -188,13 +181,13 @@
         }
         
         .history {
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 14px;
             flex: 1;
-            min-height: 100px;
+            min-height: 120px;
             overflow-y: auto;
             border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px;
+            padding-top: 12px;
         }
         
         .history::-webkit-scrollbar {
@@ -208,8 +201,8 @@
         
         .history-item {
             margin-bottom: 8px;
-            padding: 6px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 5px;
             background-color: rgba(255,255,255,0.05);
             display: flex;
             justify-content: space-between;
@@ -228,9 +221,9 @@
         .reset-btn {
             background-color: #e74c3c;
             color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 18px;
             border: none;
             cursor: pointer;
             transition: all 0.3s;
@@ -245,7 +238,7 @@
         .chart-title {
             text-align: center;
             margin-bottom: 20px;
-            font-size: 20px;
+            font-size: 22px;
             color: #ffffff;
         }
         
@@ -278,7 +271,7 @@
     
     <div class="main-container">
         <div class="groups-container">
-            <!-- 第一行：1-3小组 -->
+            <!-- 第一行：1-2小组 -->
             <div class="group-row">
                 <!-- 小组1 -->
                 <div class="group group-1">
@@ -305,7 +298,10 @@
                         <div class="history" id="history-2"></div>
                     </div>
                 </div>
-                
+            </div>
+            
+            <!-- 第二行：3-4小组 -->
+            <div class="group-row">
                 <!-- 小组3 -->
                 <div class="group group-3">
                     <div class="group-content">
@@ -318,10 +314,7 @@
                         <div class="history" id="history-3"></div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 第二行：4-6小组 -->
-            <div class="group-row">
+                
                 <!-- 小组4 -->
                 <div class="group group-4">
                     <div class="group-content">
@@ -332,32 +325,6 @@
                             <button class="undo-btn" id="undo-4" onclick="undoLastAction(4)" disabled>↩️ 撤回</button>
                         </div>
                         <div class="history" id="history-4"></div>
-                    </div>
-                </div>
-                
-                <!-- 小组5 -->
-                <div class="group group-5">
-                    <div class="group-content">
-                        <h2>第五组</h2>
-                        <div class="score" id="score-5">0</div>
-                        <div class="buttons">
-                            <button class="lottery-btn" onclick="startLottery(5)">🎲 抽奖一次 (1-5分)</button>
-                            <button class="undo-btn" id="undo-5" onclick="undoLastAction(5)" disabled>↩️ 撤回</button>
-                        </div>
-                        <div class="history" id="history-5"></div>
-                    </div>
-                </div>
-                
-                <!-- 小组6 -->
-                <div class="group group-6">
-                    <div class="group-content">
-                        <h2>第六组</h2>
-                        <div class="score" id="score-6">0</div>
-                        <div class="buttons">
-                            <button class="lottery-btn" onclick="startLottery(6)">🎲 抽奖一次 (1-5分)</button>
-                            <button class="undo-btn" id="undo-6" onclick="undoLastAction(6)" disabled>↩️ 撤回</button>
-                        </div>
-                        <div class="history" id="history-6"></div>
                     </div>
                 </div>
             </div>
@@ -373,8 +340,8 @@
 
     <script>
         // 初始化分数
-        let scores = [0, 0, 0, 0, 0, 0, 0]; // 索引1-6对应组1-6
-        let historyStack = [[], [], [], [], [], [], []]; // 用于撤回操作的堆栈
+        let scores = [0, 0, 0, 0, 0]; // 索引1-4对应组1-4
+        let historyStack = [[], [], [], [], []]; // 用于撤回操作的堆栈
         let scoreChart = null;
         
         // Office风格配色
@@ -382,9 +349,7 @@
             '#4472C4', // 蓝色
             '#ED7D31', // 橙色
             '#A5A5A5', // 灰色
-            '#FFC000', // 黄色
-            '#5B9BD5', // 浅蓝
-            '#70AD47'  // 绿色
+            '#FFC000'  // 黄色
         ];
         
         // 加载保存的分数
@@ -392,7 +357,7 @@
             const savedScores = localStorage.getItem('classroomScores');
             if (savedScores) {
                 scores = JSON.parse(savedScores);
-                for (let i = 1; i <= 6; i++) {
+                for (let i = 1; i <= 4; i++) {
                     updateScoreDisplay(i);
                     loadHistory(i);
                     updateUndoButton(i);
@@ -423,7 +388,7 @@
             scoreChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['第一组', '第二组', '第三组', '第四组', '第五组', '第六组'],
+                    labels: ['第一组', '第二组', '第三组', '第四组'],
                     datasets: [{
                         label: '小组积分',
                         data: scores.slice(1),
@@ -567,9 +532,9 @@
         // 重置所有分数
         function resetAllScores() {
             if (confirm('确定要重置所有小组的分数和历史记录吗？')) {
-                scores = [0, 0, 0, 0, 0, 0, 0];
-                historyStack = [[], [], [], [], [], [], []];
-                for (let i = 1; i <= 6; i++) {
+                scores = [0, 0, 0, 0, 0];
+                historyStack = [[], [], [], [], []];
+                for (let i = 1; i <= 4; i++) {
                     updateScoreDisplay(i);
                     localStorage.removeItem(`groupHistory-${i}`);
                     document.getElementById(`history-${i}`).innerHTML = '';
