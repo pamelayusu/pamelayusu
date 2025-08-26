@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级课堂积分抽奖系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --group-1: #4472C4; /* Office蓝色 */
+            --group-2: #ED7D31; /* Office橙色 */
+            --group-3: #A5A5A5; /* Office灰色 */
+            --group-4: #FFC000; /* Office黄色 */
+            --group-5: #5B9BD5; /* Office浅蓝 */
+            --group-6: #70AD47; /* Office绿色 */
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .main-container {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            height: calc(100vh - 150px); /* 减去标题和按钮高度 */
+        }
+        
+        .groups-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 10px; /* 为滚动条留空间 */
+        }
+        
+        .group-row {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            min-height: 0; /* 重要：防止flex项目溢出 */
+        }
+        
+        .chart-container {
+            flex: 2;
+            background-color: #252526;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* 与左侧同高 */
+        }
+        
+        .chart-wrapper {
+            flex: 1;
+            position: relative;
+            min-height: 300px; /* 最小高度保证图表可见 */
+        }
+        
+        #scoreChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .group {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            min-width: 0; /* 防止内容溢出 */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .group-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .group-1 { border-top: 4px solid var(--group-1); }
+        .group-2 { border-top: 4px solid var(--group-2); }
+        .group-3 { border-top: 4px solid var(--group-3); }
+        .group-4 { border-top: 4px solid var(--group-4); }
+        .group-5 { border-top: 4px solid var(--group-5); }
+        .group-6 { border-top: 4px solid var(--group-6); }
+        
+        .group h2 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .group-1 h2 { color: var(--group-1); }
+        .group-2 h2 { color: var(--group-2); }
+        .group-3 h2 { color: var(--group-3); }
+        .group-4 h2 { color: var(--group-4); }
+        .group-5 h2 { color: var(--group-5); }
+        .group-6 h2 { color: var(--group-6); }
+        
+        .score {
+            font-size: 42px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            background-color: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .lottery-btn {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .group-1 .lottery-btn { background-color: var(--group-1); }
+        .group-2 .lottery-btn { background-color: var(--group-2); }
+        .group-3 .lottery-btn { background-color: var(--group-3); }
+        .group-4 .lottery-btn { background-color: var(--group-4); }
+        .group-5 .lottery-btn { background-color: var(--group-5); }
+        .group-6 .lottery-btn { background-color: var(--group-6); }
+        
+        .lottery-btn:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+        }
+        
+        .undo-btn {
+            background-color: #3a3a3a;
+            color: #aaaaaa;
+            border: 1px solid #4a4a4a;
+        }
+        
+        .undo-btn:hover:not(:disabled) {
+            background-color: #4a4a4a;
+            color: #ffffff;
+        }
+        
+        .undo-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .history {
+            margin-top: 15px;
+            font-size: 14px;
+            flex: 1;
+            min-height: 100px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+        }
+        
+        .history::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .history::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        
+        .history-item {
+            margin-bottom: 8px;
+            padding: 6px;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .chart-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #ffffff;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .group-row {
+                flex-direction: column;
+            }
+            
+            .group {
+                width: 100%;
+            }
+            
+            .chart-wrapper {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>课堂积分抽奖系统</h1>
+    
+    <div class="controls">
+        <button class="reset-btn" onclick="resetAllScores()">重置所有分数</button>
+    </div>
+    
+    <div class="main-container">
+        <div class="groups-container">
+            <!-- 第一行：1-3小组 -->
+            <div class="group-row">
+                <!-- 小组1 -->
+                <div class="group group-1">
+                    <div class="group-content">
+                        <h2>第一组</h2>
+                        <div class="score" id="score-1">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(1)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-1" onclick="undoLastAction(1)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-1"></div>
+                    </div>
+                </div>
+                
+                <!-- 小组2 -->
+                <div class="group group-2">
+                    <div class="group-content">
+                        <h2>第二组</h2>
+                        <div class="score" id="score-2">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(2)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-2" onclick="undoLastAction(2)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-2"></div>
+                    </div>
+                </div>
+                
+                <!-- 小组3 -->
+                <div class="group group-3">
+                    <div class="group-content">
+                        <h2>第三组</h2>
+                        <div class="score" id="score-3">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(3)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-3" onclick="undoLastAction(3)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第二行：4-6小组 -->
+            <div class="group-row">
+                <!-- 小组4 -->
+                <div class="group group-4">
+                    <div class="group-content">
+                        <h2>第四组</h2>
+                        <div class="score" id="score-4">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(4)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-4" onclick="undoLastAction(4)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-4"></div>
+                    </div>
+                </div>
+                
+                <!-- 小组5 -->
+                <div class="group group-5">
+                    <div class="group-content">
+                        <h2>第五组</h2>
+                        <div class="score" id="score-5">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(5)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-5" onclick="undoLastAction(5)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-5"></div>
+                    </div>
+                </div>
+                
+                <!-- 小组6 -->
+                <div class="group group-6">
+                    <div class="group-content">
+                        <h2>第六组</h2>
+                        <div class="score" id="score-6">0</div>
+                        <div class="buttons">
+                            <button class="lottery-btn" onclick="startLottery(6)">🎲 抽奖一次 (1-5分)</button>
+                            <button class="undo-btn" id="undo-6" onclick="undoLastAction(6)" disabled>↩️ 撤回</button>
+                        </div>
+                        <div class="history" id="history-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">小组积分统计图</h2>
+            <div class="chart-wrapper">
+                <canvas id="scoreChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化分数
+        let scores = [0, 0, 0, 0, 0, 0, 0]; // 索引1-6对应组1-6
+        let historyStack = [[], [], [], [], [], [], []]; // 用于撤回操作的堆栈
+        let scoreChart = null;
+        
+        // Office风格配色
+        const groupColors = [
+            '#4472C4', // 蓝色
+            '#ED7D31', // 橙色
+            '#A5A5A5', // 灰色
+            '#FFC000', // 黄色
+            '#5B9BD5', // 浅蓝
+            '#70AD47'  // 绿色
+        ];
+        
+        // 加载保存的分数
+        function loadScores() {
+            const savedScores = localStorage.getItem('classroomScores');
+            if (savedScores) {
+                scores = JSON.parse(savedScores);
+                for (let i = 1; i <= 6; i++) {
+                    updateScoreDisplay(i);
+                    loadHistory(i);
+                    updateUndoButton(i);
+                }
+            }
+            
+            // 加载历史堆栈
+            const savedHistoryStack = localStorage.getItem('historyStack');
+            if (savedHistoryStack) {
+                historyStack = JSON.parse(savedHistoryStack);
+            }
+            
+            // 初始化图表
+            initChart();
+        }
+        
+        // 保存分数到本地存储
+        function saveScores() {
+            localStorage.setItem('classroomScores', JSON.stringify(scores));
+            localStorage.setItem('historyStack', JSON.stringify(historyStack));
+            updateChart();
+        }
+        
+        // 初始化图表
+        function initChart() {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            
+            scoreChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['第一组', '第二组', '第三组', '第四组', '第五组', '第六组'],
+                    datasets: [{
+                        label: '小组积分',
+                        data: scores.slice(1),
+                        backgroundColor: groupColors,
+                        borderColor: groupColors.map(color => `${color}CC`),
+                        borderWidth: 1,
+                        hoverBackgroundColor: groupColors.map(color => `${color}DD`),
+                        hoverBorderColor: groupColors,
+                        hoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 6
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+        
+        // 更新图表
+        function updateChart() {
+            if (scoreChart) {
+                scoreChart.data.datasets[0].data = scores.slice(1);
+                scoreChart.update();
+            }
+        }
+        
+        // 抽奖
+        function startLottery(group) {
+            const points = Math.floor(Math.random() * 5) + 1; // 1-5分随机
+            
+            // 保存当前状态到历史堆栈
+            historyStack[group].push(scores[group]);
+            
+            scores[group] += points;
+            updateScoreDisplay(group);
+            saveScores();
+            addHistory(group, `抽奖获得: +${points}分`);
+            updateUndoButton(group);
+            
+            // 显示抽奖结果弹窗
+            alert(`第${group}组抽奖获得 ${points}分！`);
+        }
+        
+        // 撤回上一次操作
+        function undoLastAction(group) {
+            if (historyStack[group].length > 0) {
+                const previousScore = historyStack[group].pop();
+                const pointsLost = scores[group] - previousScore;
+                scores[group] = previousScore;
+                
+                updateScoreDisplay(group);
+                saveScores();
+                addHistory(group, `撤回: -${pointsLost}分`);
+                updateUndoButton(group);
+            }
+        }
+        
+        // 更新分数显示
+        function updateScoreDisplay(group) {
+            document.getElementById(`score-${group}`).textContent = scores[group];
+        }
+        
+        // 更新撤回按钮状态
+        function updateUndoButton(group) {
+            const undoButton = document.getElementById(`undo-${group}`);
+            undoButton.disabled = historyStack[group].length === 0;
+        }
+        
+        // 添加历史记录
+        function addHistory(group, text) {
+            const historyElement = document.getElementById(`history-${group}`);
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `<span>${text}</span> <span class="timestamp">${timeString}</span>`;
+            
+            historyElement.insertBefore(historyItem, historyElement.firstChild);
+            
+            // 保存历史记录
+            const historyKey = `groupHistory-${group}`;
+            let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            history.unshift({text, time: timeString});
+            if (history.length > 20) history = history.slice(0, 20); // 最多保存20条
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        }
+        
+        // 加载历史记录
+        function loadHistory(group) {
+            const historyElement = document.getElementById(`history-${group}`);
+            const historyKey = `groupHistory-${group}`;
+            const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            
+            historyElement.innerHTML = '';
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `<span>${item.text}</span> <span class="timestamp">${item.time}</span>`;
+                historyElement.appendChild(historyItem);
+            });
+        }
+        
+        // 重置所有分数
+        function resetAllScores() {
+            if (confirm('确定要重置所有小组的分数和历史记录吗？')) {
+                scores = [0, 0, 0, 0, 0, 0, 0];
+                historyStack = [[], [], [], [], [], [], []];
+                for (let i = 1; i <= 6; i++) {
+                    updateScoreDisplay(i);
+                    localStorage.removeItem(`groupHistory-${i}`);
+                    document.getElementById(`history-${i}`).innerHTML = '';
+                    updateUndoButton(i);
+                }
+                saveScores();
+            }
+        }
+        
+        // 页面加载时初始化
+        window.onload = loadScores;
+    </script>
+</body>
+</html>

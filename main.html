@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组别导览系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 126, 95, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .group-card {
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .group-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .card-front {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-back {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            transform: rotateY(180deg);
+        }
+        
+        .group-number {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .group-text {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .card-back p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* 霓虹灯效果 */
+        .neon {
+            animation: neon 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes neon {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff7e5f, 0 0 20px #ff7e5f;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff7e5f, 0 0 40px #ff7e5f;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .groups-container {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .group-number {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="neon">组别导览系统</h1>
+            <p class="subtitle">选择您要访问的组别页面，点击卡片查看更多信息并跳转</p>
+        </header>
+        
+        <div class="groups-container">
+            <!-- 组别2 -->
+            <div class="group-card" onclick="navigateTo('group2.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">2</div>
+                        <div class="group-text">第二组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第二组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别3 -->
+            <div class="group-card" onclick="navigateTo('group3.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">3</div>
+                        <div class="group-text">第三组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第三组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别4 -->
+            <div class="group-card" onclick="navigateTo('group4.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">4</div>
+                        <div class="group-text">第四组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第四组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别5 -->
+            <div class="group-card" onclick="navigateTo('group5.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">5</div>
+                        <div class="group-text">第五组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第五组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别6 -->
+            <div class="group-card" onclick="navigateTo('group6.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">6</div>
+                        <div class="group-text">第六组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第六组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别7 -->
+            <div class="group-card" onclick="navigateTo('group7.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">7</div>
+                        <div class="group-text">第七组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第七组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 组别8 -->
+            <div class="group-card" onclick="navigateTo('group8.html')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="group-number">8</div>
+                        <div class="group-text">第八组</div>
+                    </div>
+                    <div class="card-back">
+                        <p>访问第八组页面</p>
+                        <button class="btn">进入页面</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 组别导览系统 | 设计精美，导航便捷</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 初始化粒子背景
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+        
+        // 页面跳转函数
+        function navigateTo(url) {
+            // 添加跳转动画效果
+            document.body.style.opacity = 0;
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        }
+        
+        // 页面加载时的淡入效果
+        window.addEventListener('load', () => {
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+            document.body.style.opacity = 1;
+        });
+    </script>
+</body>
+</html>
