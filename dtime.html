@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课堂休息倒计时器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+        
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 25px;
+            color: #4fc3f7;
+            font-size: 28px;
+        }
+        
+        .timer-display {
+            font-size: 80px;
+            font-weight: bold;
+            margin: 25px 0;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .start-btn {
+            background-color: #00c853;
+            color: white;
+        }
+        
+        .start-btn:hover {
+            background-color: #009624;
+        }
+        
+        .pause-btn {
+            background-color: #ffab00;
+            color: white;
+        }
+        
+        .pause-btn:hover {
+            background-color: #c67c00;
+        }
+        
+        .reset-btn {
+            background-color: #ff5252;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c50e29;
+        }
+        
+        .time-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .time-btn {
+            background-color: #37474f;
+            color: #ffffff;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .time-btn.active {
+            background-color: #4fc3f7;
+            color: #000;
+        }
+        
+        .custom-time {
+            margin-top: 20px;
+        }
+        
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #37474f;
+            background-color: #263238;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+        }
+        
+        .warning {
+            color: #ff5252;
+            margin-top: 5px;
+            font-size: 14px;
+            height: 20px;
+        }
+        
+        .red-alert {
+            background-color: #c62828 !important;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>课堂休息倒计时器</h1>
+        
+        <div class="timer-display" id="timer">10:00</div>
+        
+        <div class="controls">
+            <button class="start-btn" id="startBtn">开始</button>
+            <button class="pause-btn" id="pauseBtn">暂停</button>
+            <button class="reset-btn" id="resetBtn">重置</button>
+        </div>
+        
+        <div class="time-selection">
+            <button class="time-btn active" data-minutes="10">10分钟</button>
+            <button class="time-btn" data-minutes="15">15分钟</button>
+        </div>
+        
+        <div class="custom-time">
+            <input type="number" id="customTime" min="1" max="60" placeholder="自定义分钟">
+            <div class="warning" id="warning"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const timerDisplay = document.getElementById('timer');
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const timeBtns = document.querySelectorAll('.time-btn');
+            const customTimeInput = document.getElementById('customTime');
+            const warning = document.getElementById('warning');
+            const body = document.body;
+            
+            let totalSeconds = 600; // 默认10分钟
+            let remainingSeconds = totalSeconds;
+            let timerInterval = null;
+            let isRunning = false;
+            
+            // 更新显示时间
+            function updateDisplay() {
+                const minutes = Math.floor(remainingSeconds / 60);
+                const seconds = remainingSeconds % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // 检查是否只剩一分钟
+                if (remainingSeconds <= 60) {
+                    body.classList.add('red-alert');
+                } else {
+                    body.classList.remove('red-alert');
+                }
+            }
+            
+            // 开始计时
+            function startTimer() {
+                if (isRunning) return;
+                
+                if (remainingSeconds === 0) {
+                    remainingSeconds = totalSeconds;
+                    updateDisplay();
+                }
+                
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    remainingSeconds--;
+                    updateDisplay();
+                    
+                    if (remainingSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        playAlarm();
+                    }
+                }, 1000);
+            }
+            
+            // 暂停计时
+            function pauseTimer() {
+                clearInterval(timerInterval);
+                isRunning = false;
+            }
+            
+            // 重置计时
+            function resetTimer() {
+                clearInterval(timerInterval);
+                isRunning = false;
+                remainingSeconds = totalSeconds;
+                updateDisplay();
+                body.classList.remove('red-alert');
+            }
+            
+            // 播放提示音
+            function playAlarm() {
+                // 在实际使用中可以添加声音提示
+                console.log("时间到!");
+            }
+            
+            // 设置时间
+            function setTime(minutes) {
+                // 验证输入
+                if (minutes < 1 || minutes > 60) {
+                    warning.textContent = "请输入1-60之间的数字";
+                    return;
+                }
+                
+                warning.textContent = "";
+                totalSeconds = minutes * 60;
+                resetTimer();
+                
+                // 更新按钮激活状态
+                timeBtns.forEach(btn => {
+                    if (parseInt(btn.dataset.minutes) === minutes) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 事件监听
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            
+            timeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const minutes = parseInt(this.dataset.minutes);
+                    setTime(minutes);
+                    customTimeInput.value = "";
+                });
+            });
+            
+            customTimeInput.addEventListener('change', function() {
+                const minutes = parseInt(this.value);
+                if (!isNaN(minutes)) {
+                    setTime(minutes);
+                }
+            });
+            
+            // 初始化显示
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
