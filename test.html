@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课堂积分抽奖系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .group {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            width: 280px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .group h2 {
+            color: #3498db;
+            margin-top: 0;
+            text-align: center;
+        }
+        .score {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            color: #e74c3c;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .lottery-btn {
+            background-color: #f39c12;
+            color: white;
+            font-size: 16px;
+        }
+        .lottery-btn:hover {
+            background-color: #d35400;
+        }
+        .undo-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .undo-btn:hover {
+            background-color: #7f8c8d;
+        }
+        .undo-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .history {
+            margin-top: 15px;
+            font-size: 14px;
+            max-height: 100px;
+            overflow-y: auto;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .history-item {
+            margin-bottom: 5px;
+            padding: 3px;
+            border-bottom: 1px dashed #eee;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+        }
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>课堂积分抽奖系统</h1>
+    
+    <div class="controls">
+        <button class="reset-btn" onclick="resetAllScores()">重置所有分数</button>
+    </div>
+    
+    <div class="container">
+        <!-- 小组1 -->
+        <div class="group">
+            <h2>第一组</h2>
+            <div class="score" id="score-1">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(1)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-1" onclick="undoLastAction(1)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-1"></div>
+        </div>
+        
+        <!-- 小组2 -->
+        <div class="group">
+            <h2>第二组</h2>
+            <div class="score" id="score-2">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(2)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-2" onclick="undoLastAction(2)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-2"></div>
+        </div>
+        
+        <!-- 小组3 -->
+        <div class="group">
+            <h2>第三组</h2>
+            <div class="score" id="score-3">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(3)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-3" onclick="undoLastAction(3)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-3"></div>
+        </div>
+        
+        <!-- 小组4 -->
+        <div class="group">
+            <h2>第四组</h2>
+            <div class="score" id="score-4">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(4)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-4" onclick="undoLastAction(4)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-4"></div>
+        </div>
+        
+        <!-- 小组5 -->
+        <div class="group">
+            <h2>第五组</h2>
+            <div class="score" id="score-5">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(5)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-5" onclick="undoLastAction(5)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-5"></div>
+        </div>
+        
+        <!-- 小组6 -->
+        <div class="group">
+            <h2>第六组</h2>
+            <div class="score" id="score-6">0</div>
+            <div class="buttons">
+                <button class="lottery-btn" onclick="startLottery(6)">抽奖一次 (1-5分)</button>
+                <button class="undo-btn" id="undo-6" onclick="undoLastAction(6)" disabled>撤回</button>
+            </div>
+            <div class="history" id="history-6"></div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化分数
+        let scores = [0, 0, 0, 0, 0, 0, 0]; // 索引1-6对应组1-6
+        let historyStack = [[], [], [], [], [], [], []]; // 用于撤回操作的堆栈
+        
+        // 加载保存的分数
+        function loadScores() {
+            const savedScores = localStorage.getItem('classroomScores');
+            if (savedScores) {
+                scores = JSON.parse(savedScores);
+                for (let i = 1; i <= 6; i++) {
+                    updateScoreDisplay(i);
+                    loadHistory(i);
+                    updateUndoButton(i);
+                }
+            }
+            
+            // 加载历史堆栈
+            const savedHistoryStack = localStorage.getItem('historyStack');
+            if (savedHistoryStack) {
+                historyStack = JSON.parse(savedHistoryStack);
+            }
+        }
+        
+        // 保存分数到本地存储
+        function saveScores() {
+            localStorage.setItem('classroomScores', JSON.stringify(scores));
+            localStorage.setItem('historyStack', JSON.stringify(historyStack));
+        }
+        
+        // 抽奖
+        function startLottery(group) {
+            const points = Math.floor(Math.random() * 5) + 1; // 1-5分随机
+            
+            // 保存当前状态到历史堆栈
+            historyStack[group].push(scores[group]);
+            
+            scores[group] += points;
+            updateScoreDisplay(group);
+            saveScores();
+            addHistory(group, `抽奖获得: +${points}分`);
+            updateUndoButton(group);
+            
+            // 显示抽奖结果弹窗
+            alert(`第${group}组抽奖获得 ${points}分！`);
+        }
+        
+        // 撤回上一次操作
+        function undoLastAction(group) {
+            if (historyStack[group].length > 0) {
+                const previousScore = historyStack[group].pop();
+                const pointsLost = scores[group] - previousScore;
+                scores[group] = previousScore;
+                
+                updateScoreDisplay(group);
+                saveScores();
+                addHistory(group, `撤回: -${pointsLost}分`);
+                updateUndoButton(group);
+            }
+        }
+        
+        // 更新分数显示
+        function updateScoreDisplay(group) {
+            document.getElementById(`score-${group}`).textContent = scores[group];
+        }
+        
+        // 更新撤回按钮状态
+        function updateUndoButton(group) {
+            const undoButton = document.getElementById(`undo-${group}`);
+            undoButton.disabled = historyStack[group].length === 0;
+        }
+        
+        // 添加历史记录
+        function addHistory(group, text) {
+            const historyElement = document.getElementById(`history-${group}`);
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `${text} <span class="timestamp">${timeString}</span>`;
+            
+            historyElement.insertBefore(historyItem, historyElement.firstChild);
+            
+            // 保存历史记录
+            const historyKey = `groupHistory-${group}`;
+            let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            history.unshift({text, time: timeString});
+            if (history.length > 20) history = history.slice(0, 20); // 最多保存20条
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        }
+        
+        // 加载历史记录
+        function loadHistory(group) {
+            const historyElement = document.getElementById(`history-${group}`);
+            const historyKey = `groupHistory-${group}`;
+            const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            
+            historyElement.innerHTML = '';
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `${item.text} <span class="timestamp">${item.time}</span>`;
+                historyElement.appendChild(historyItem);
+            });
+        }
+        
+        // 重置所有分数
+        function resetAllScores() {
+            if (confirm('确定要重置所有小组的分数和历史记录吗？')) {
+                scores = [0, 0, 0, 0, 0, 0, 0];
+                historyStack = [[], [], [], [], [], [], []];
+                for (let i = 1; i <= 6; i++) {
+                    updateScoreDisplay(i);
+                    localStorage.removeItem(`groupHistory-${i}`);
+                    document.getElementById(`history-${i}`).innerHTML = '';
+                    updateUndoButton(i);
+                }
+                saveScores();
+            }
+        }
+        
+        // 页面加载时初始化
+        window.onload = loadScores;
+    </script>
+</body>
+</html>
